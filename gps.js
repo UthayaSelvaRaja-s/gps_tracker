@@ -5,7 +5,7 @@ const mysql = require('mysql2');
 
 // Middleware to parse URL-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
-const port = 7002;
+const port = 7005;
 
 // MySQL connection
 const db = mysql.createConnection({
