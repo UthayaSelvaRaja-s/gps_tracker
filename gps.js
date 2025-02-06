@@ -1,41 +1,49 @@
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const mysql = require('mysql2');
 
-    const express = require("express");
-    const mysql = require("mysql2");
-    const app = express();
+// Middleware to parse URL-encoded bodies
+app.use(bodyParser.urlencoded({ extended: true }));
+const port = 7002;
 
+// MySQL connection
+const db = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',   // Use your MySQL username
+//   password: '',   // Use your MySQL password
+//   database: 'gpsData'
+     host: "210.18.139.40",
+    user: "root",
+    password: "nastaf@321!",
+    database: "jessycabs_db"
+});
 
+// Connect to MySQL
+db.connect(err => {
+  if (err) {
+    console.error('Error connecting to MySQL:', err);
+    return;
+  }
+  console.log('Connected to MySQL');
+});
 
-    db.connect((err) => {
-        if (err) {
-            console.error("Database connection failed:", err);
-        } else {
-            console.log("Connected to MySQL");
-        }
-    });
+// Endpoint to store location data
+app.post('/store-location', (req, res) => {
+  const { latitude, longitude } = req.body;
 
-    // Middleware to parse JSON data
-    app.use(express.json());
+  // Insert the latitude, longitude, and timestamp into MySQL
+  const query = 'INSERT INTO gps_records (Latitude, Longitude) VALUES (?, ?)';
+  db.execute(query, [latitude, longitude], (err, result) => {
+    if (err) {
+      console.error('Error inserting data:', err);
+      return res.status(500).send('Error storing location data');
+    }
+    res.send('Location data stored successfully');
+  });
+});
 
-    // API endpoint to receive GPS data
-    app.get("/api/gpsdata", (req, res) => {
-        const { lat, lng } = req.query;
-
-        if (!lat || !lng) {
-            return res.status(400).json({ error: "Latitude and Longitude are required" });
-        }
-
-        const sql = "INSERT INTO gps_data (Latitude, Longitude, timestampdata) VALUES (?, ?, NOW())";
-        db.query(sql, [lat, lng], (err, result) => {
-            if (err) {
-                console.error("Error inserting GPS data:", err);
-                return res.status(500).json({ error: "Database error" });
-            }
-            res.json({ message: "GPS data stored successfully", id: result.insertId });
-        });
-    });
-
-    // Start the server
-    app.listen(3000, () => {
-        console.log("Server running on port 3000");
-    });
-
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
