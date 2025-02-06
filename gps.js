@@ -30,16 +30,20 @@ db.connect(err => {
 
 // Endpoint to store location data
 app.post('/store-location', (req, res) => {
+  console.log("api is hiting")
   const { latitude, longitude } = req.body;
 
   // Insert the latitude, longitude, and timestamp into MySQL
   const query = 'INSERT INTO gps_records (Latitude, Longitude) VALUES (?, ?)';
   db.execute(query, [latitude, longitude], (err, result) => {
     if (err) {
+      console.log("error on saving data ")
       console.error('Error inserting data:', err);
       return res.status(500).send('Error storing location data');
+      
     }
     res.send('Location data stored successfully');
+    console.log("data is saved ")
   });
 });
 
