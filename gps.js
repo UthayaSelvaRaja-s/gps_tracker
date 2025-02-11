@@ -61,17 +61,11 @@ const cors = require('cors');
 // Middleware to parse URL-encoded bodies and allow CORS
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());  // Enable Cross-Origin Resource Sharing (CORS)
+app.use(express.json());
 
 const port = 7005;
 
 // MySQL connection
-const db = mysql.createConnection({
-  host: "210.18.139.40",
-  user: "root",
-  password: "nastaf@321!",
-  database: "jessycabs_db"
-});
-
 // Connect to MySQL
 db.connect(err => {
   if (err) {
@@ -82,22 +76,45 @@ db.connect(err => {
 });
 
 // Endpoint to store location data
-app.post('/store-location', (req, res) => {
-  console.log("API is hitting");
-  const { latitude, longitude } = req.body;
+// app.post('/store-location', (req, res) => {
+//   console.log("API is hitting");
+//   const { latitude, longitude } = req.body;
 
-  // Insert the latitude, longitude, and timestamp into MySQL
+//   // Insert the latitude, longitude, and timestamp into MySQL
+//   const query = 'INSERT INTO gps_records (Latitude, Longitude) VALUES (?, ?)';
+//   db.execute(query, [latitude, longitude], (err, result) => {
+//     if (err) {
+//       console.log("Error on saving data");
+//       console.error('Error inserting data:', err);
+//       return res.status(500).send('Error storing location data');
+//     }
+//     res.send('Location data stored successfully');
+//     console.log("Data is saved");
+//   });
+// });
+app.post('/store-location', (req, res) => {
+  console.log("API is hitting", req.body); // Debugging
+
+  let { latitude, longitude } = req.body;
+
+  // Check if latitude or longitude is undefined
+  if (latitude === undefined || longitude === undefined) {
+      console.error("Received undefined latitude or longitude!");
+      return res.status(400).json({ error: "Latitude and Longitude are required" });
+  }
+
+  // Insert into MySQL
   const query = 'INSERT INTO gps_records (Latitude, Longitude) VALUES (?, ?)';
-  db.execute(query, [latitude, longitude], (err, result) => {
-    if (err) {
-      console.log("Error on saving data");
-      console.error('Error inserting data:', err);
-      return res.status(500).send('Error storing location data');
-    }
-    res.send('Location data stored successfully');
-    console.log("Data is saved");
+  db.execute(query, [latitude || null, longitude || null], (err, result) => {
+      if (err) {
+          console.log("Error on saving data:", err);
+          return res.status(500).send('Error storing location data');
+      }
+      res.send('Location data stored successfully');
+      console.log("Data is saved");
   });
 });
+
 
 // Start the server
 app.listen(port, () => {
