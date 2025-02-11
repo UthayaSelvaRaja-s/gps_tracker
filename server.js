@@ -30,7 +30,7 @@ app.post("/api/gps", (req, res) => {
     return res.status(400).json({ error: "Missing GPS data" });
   }
 
-  const sql = "INSERT INTO gps_records (latitude, longitude, altitude) VALUES (?, ?, ?)";
+  const sql = "INSERT INTO gps_data (latitude, longitude, altitude) VALUES (?, ?, ?)";
   db.query(sql, [latitude, longitude, altitude], (err, result) => {
     if (err) {
       console.error("Error inserting data:", err);
