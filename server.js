@@ -10,11 +10,22 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MySQL Database Connection
+// const db = mysql.createConnection({
+//   host: "127.0.0.1", // Change if using an external DB
+//   user: "root",
+//   password: "", // Add your MySQL password
+//   database: "gps_tracker_db", // Database Name
+// });
+// MySQL connection
 const db = mysql.createConnection({
-  host: "127.0.0.1", // Change if using an external DB
-  user: "root",
-  password: "", // Add your MySQL password
-  database: "gps_tracker_db", // Database Name
+//   host: 'localhost',
+//   user: 'root',   // Use your MySQL username
+//   password: '',   // Use your MySQL password
+//   database: 'gpsData'
+     host: "210.18.139.40",
+    user: "root",
+    password: "nastaf@321!",
+    database: "jessycabs_db"
 });
 
 db.connect((err) => {
@@ -41,5 +52,5 @@ app.post("/api/gps", (req, res) => {
 });
 
 // Start Server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 7005;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
