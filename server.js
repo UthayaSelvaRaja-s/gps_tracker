@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 // MySQL Database Connection
 const db = mysql.createConnection({
-  host: "localhost", // Change if using an external DB
+  host: "127.0.0.1", // Change if using an external DB
   user: "root",
   password: "", // Add your MySQL password
   database: "gps_tracker_db", // Database Name
